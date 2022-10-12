@@ -1,22 +1,21 @@
-import { Fixture, MockContract } from "ethereum-waffle";
-import { Wallet } from "@ethersproject/wallet";
-import { Lending } from "../../typechain";
+import { MockContract } from '@ethereum-waffle/mock-contract';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { Lending } from "../../typechain-types";
 
 declare module "mocha" {
-  export interface Context {
-    loadFixture: <T>(fixture: Fixture<T>) => Promise<T>;
-    signers: Signers;
-    mocks: Mocks;
-    lending: Lending;
-  }
+    export interface Context {
+        signers: Signers;
+        mocks: Mocks;
+        lending: Lending;
+    }
 }
 
 export interface Signers {
-  deployer: Wallet;
-  alice: Wallet;
-  bob: Wallet;
+    deployer: SignerWithAddress;
+    alice: SignerWithAddress;
+    bob: SignerWithAddress;
 }
 
 export interface Mocks {
-  mockUsdc: MockContract;
+    mockUsdc: MockContract;
 }

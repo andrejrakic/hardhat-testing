@@ -1,30 +1,35 @@
-import { Fixture, MockContract } from "ethereum-waffle";
+import { MockContract } from '@ethereum-waffle/mock-contract';
 import { ContractFactory, Wallet } from "ethers";
 import { ethers } from "hardhat";
-import { Lending } from "../../typechain";
+import { Lending } from "../../typechain-types";
 import { deployMockUsdc } from "./mocks";
+import { Signers } from './types';
 
 type UnitLendingFixtureType = {
-  lending: Lending;
-  mockUsdc: MockContract;
+    lending: Lending;
+    mockUsdc: MockContract;
 };
 
-export const unitLendingFixture: Fixture<UnitLendingFixtureType> = async (
-  signers: Wallet[]
-) => {
-  const deployer: Wallet = signers[0];
+export async function getSigners(): Promise<Signers> {
+    const [deployer, alice, bob] = await ethers.getSigners();
 
-  const lendingFactory: ContractFactory = await ethers.getContractFactory(
-    `Lending`
-  );
+    return { deployer, alice, bob };
+}
 
-  const lending: Lending = (await lendingFactory
-    .connect(deployer)
-    .deploy()) as Lending;
+export async function unitLendingFixture(): Promise<UnitLendingFixtureType> {
+    const { deployer } = await getSigners();
 
-  await lending.deployed();
+    const lendingFactory: ContractFactory = await ethers.getContractFactory(
+        `Lending`
+    );
 
-  const mockUsdc = await deployMockUsdc(deployer);
+    const lending: Lending = (await lendingFactory
+        .connect(deployer)
+        .deploy()) as Lending;
 
-  return { lending, mockUsdc };
+    await lending.deployed();
+
+    const mockUsdc = await deployMockUsdc(deployer);
+
+    return { lending, mockUsdc };
 };
